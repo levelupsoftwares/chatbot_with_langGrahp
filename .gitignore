@@ -1,0 +1,5 @@
+# ignoreing practise folder
+experimenting/
+
+# env file
+.env
