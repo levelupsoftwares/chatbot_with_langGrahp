@@ -3,3 +3,4 @@ langchain
 langchain_groq
 dotenv
 langchain-core
+streamlit
