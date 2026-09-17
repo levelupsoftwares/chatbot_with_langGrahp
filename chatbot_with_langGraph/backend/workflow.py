@@ -35,15 +35,14 @@ checkpointer = MemorySaver()
 
 workflow = graph.compile(checkpointer=checkpointer)
 
-thread_id = '1'
-while True:
-    user_message =  input('Enter here: ')
-    print('User: ',user_message)
+# thread_id = '1'
+# while True:
+#     user_message =  input('Enter here: ')
+#     print('User: ',user_message)
 
-    configure = {'configurable':{'thread_id':thread_id}}
-    if user_message.strip().lower() in ['quit','bye','end']:
-        break
+#     configure = {'configurable':{'thread_id':thread_id}}
+#     if user_message.strip().lower() in ['quit','bye','end']:
+#         break
 
-    response = workflow.invoke({'message':[user_message]},config=configure)
-    print(response['message'][-1].content)
-# workflow.invoke({'message':'hi there'})
+#     response = workflow.invoke({'message':[user_message]},config=configure)
+#     print(response['message'][-1].content)
