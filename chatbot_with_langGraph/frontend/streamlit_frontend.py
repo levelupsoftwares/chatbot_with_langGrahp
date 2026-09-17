@@ -29,10 +29,25 @@ if user_input:
         st.text(user_input)
 
  # get ai message from backend
-    response = workflow.invoke({'message':[HumanMessage(content =user_input)]},config=CONFIG)
-    ai_message = response['message'][-1].content
+    # response = workflow.invoke({'message':[HumanMessage(content =user_input)]},config=CONFIG)
+    # ai_message = response['message'][-1].content
+
+    ai_message = st.write_stream(
+        message_chunk.content for message_chunk ,meta_data in workflow.stream(
+                {'message':[user_input]},
+                 config=CONFIG,
+                 stream_mode='messages'
+        ) 
+    )
+
+    # workflow.stream({'message':[HumanMessage(content =user_input)]},
+    #                            config=CONFIG,
+    #                            stream_mode='messages'
+    #                            )
+   
 
  # add assistent message into history 
     st.session_state['message_history'].append({'role':'assistant','content':ai_message})
-    with st.chat_message('assistant'):
-        st.text(ai_message)
+    
+    # with st.chat_message('assistant'):
+    #     st.text(ai_message)
