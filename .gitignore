@@ -3,3 +3,6 @@ experimenting/
 
 # env file
 .env
+
+__init__.py
+__pycache__
