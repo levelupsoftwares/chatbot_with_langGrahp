@@ -8,7 +8,7 @@ from langgraph.checkpoint.memory import MemorySaver
 # loading api key
 load_dotenv()
 
-model  = ChatGroq(model_name = 'openai/gpt-oss-20b' , max_tokens=200)
+model  = ChatGroq(model_name = 'openai/gpt-oss-20b' , max_tokens=900 , reasoning_effort='low')
 
 #state
 class chat_state(TypedDict):
@@ -40,9 +40,20 @@ workflow = graph.compile(checkpointer=checkpointer)
 #     user_message =  input('Enter here: ')
 #     print('User: ',user_message)
 
-#     configure = {'configurable':{'thread_id':thread_id}}
+# configure = {'configurable':{'thread_id':thread_id}}
 #     if user_message.strip().lower() in ['quit','bye','end']:
 #         break
 
 #     response = workflow.invoke({'message':[user_message]},config=configure)
 #     print(response['message'][-1].content)
+
+
+# implement streaming on the ai response
+
+# for chunck,metadata in workflow.stream(
+#     {'message':['write an essay on gpu with 650 words']},
+#     config=configure,
+#     stream_mode='messages'
+# ):
+#     if chunck.content:
+#         print(chunck.content , end='',flush=True)
