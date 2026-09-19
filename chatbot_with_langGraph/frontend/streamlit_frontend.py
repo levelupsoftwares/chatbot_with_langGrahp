@@ -1,11 +1,14 @@
 import streamlit as st
 from chatbot_with_langGraph.backend.workflow import workflow
 from langchain_core.messages import HumanMessage
+import uuid
 
-######################### CONFIGURATION #########################
 
-thread_id = '1'
-CONFIG = {'configurable':{'thread_id':thread_id}}
+######################## Utility Functions ######################
+def generate_thread_id():
+    thread_id = uuid.uuid4()
+    return thread_id
+
 
 
 ######################### INITIALIZE SESSION STATE ##############
@@ -15,7 +18,13 @@ if 'message_history' not in st.session_state:
     st.session_state['message_history'] = []
 
 
-# message_history = []
+if 'thread_id' not in st.session_state:
+    st.session_state['thread_id'] = generate_thread_id()
+
+######################### CONFIGURATION #########################
+
+
+CONFIG = {'configurable':{'thread_id':st.session_state['thread_id']}}
 
 ####################### DISPLAY PREVIOUS CHAT HISTORY #############
 
@@ -59,3 +68,10 @@ if user_input:
 
     # with st.chat_message('assistant'):
     #     st.text(ai_message)
+
+################################   Side Bar UI  #############################
+
+st.sidebar.title('AI ChatBot')
+st.sidebar.button('New Chat')
+st.sidebar.header('Conversations')
+st.sidebar.text(st.session_state['thread_id'])
