@@ -9,7 +9,19 @@ def generate_thread_id():
     thread_id = uuid.uuid4()
     return thread_id
 
+def reset_chat():
+    thread_id = generate_thread_id()
+    st.session_state['thread_id'] = thread_id
+    add_thread(st.session_state['thread_id'])
+    st.session_state['message_history'] = []
 
+def add_thread(thread_id):
+    if thread_id not in st.session_state['chat_threads']:
+        st.session_state['chat_threads'].append(thread_id)
+
+def load_conversation(thread_id):
+    return workflow.get_state(config={'configurable':{'thread_id':thread_id}}
+).values.get('message',[])
 
 ######################### INITIALIZE SESSION STATE ##############
 
@@ -20,6 +32,11 @@ if 'message_history' not in st.session_state:
 
 if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_thread_id()
+
+if 'chat_threads' not in st.session_state:
+    st.session_state['chat_threads'] = []
+
+add_thread(st.session_state['thread_id'])
 
 ######################### CONFIGURATION #########################
 
@@ -72,6 +89,25 @@ if user_input:
 ################################   Side Bar UI  #############################
 
 st.sidebar.title('AI ChatBot')
-st.sidebar.button('New Chat')
+
+if st.sidebar.button('New Chat'):
+    reset_chat()
+    st.rerun()
+
+
 st.sidebar.header('Conversations')
-st.sidebar.text(st.session_state['thread_id'])
+
+for thread_id in st.session_state['chat_threads'][::-1]:
+    if st.sidebar.button(thread_id):
+        st.session_state['thread_id'] = thread_id
+        messages = load_conversation(thread_id)
+
+        temp_messages = []
+        for msg in messages:
+            if isinstance(msg,HumanMessage):
+                role="user"
+            else:
+                role="assistant"
+            temp_messages.append({'role':role,'content':msg.content})
+
+        st.session_state['message_history'] = temp_messages
