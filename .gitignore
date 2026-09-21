@@ -6,3 +6,5 @@ experimenting/
 
 __init__.py
 __pycache__
+
+chatbot.db*
