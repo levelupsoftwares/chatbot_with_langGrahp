@@ -3,7 +3,8 @@ from langchain_core.messages import BaseMessage
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from typing import TypedDict,Annotated
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
+import sqlite3
 
 # loading api key
 load_dotenv()
@@ -31,10 +32,24 @@ graph.add_node('chat_node',chat_node)
 graph.add_edge(START,'chat_node')
 graph.add_edge('chat_node',END)
 
-checkpointer = MemorySaver()
+
+connection = sqlite3.connect(database='chatbot.db',check_same_thread=False)
+
+# checkpointer
+checkpointer = SqliteSaver(conn=connection)
 
 workflow = graph.compile(checkpointer=checkpointer)
 
+
+# we need thread ids to pass in config from the database so we can access the store chats 
+def threads_retriever():
+    all_threads = set()
+    for checkpoit in checkpointer.list(None):
+        all_threads.add(checkpoit.config['configurable']['thread_id'])
+    return list(all_threads)
+
+# testing_list = threads_retriever()
+# print(testing_list)
 # thread_id = '1'
 # while True:
 #     user_message =  input('Enter here: ')
